@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class AddressBook {
 
-	private static List<ContactPerson> contactPersonList = new ArrayList<>();
+	private static List<Contact> contactPersonList = new ArrayList<>();
 
 	public AddressBook() {
 	}
@@ -22,10 +22,10 @@ public class AddressBook {
 		String phone = readInput("phone");
 		String email = readInput("email");
 
-		ContactPerson contactPerson1 = new ContactPerson(firstName, lastName, address, city, zip, phone, email);
+		Contact contactPerson1 = new Contact(firstName, lastName, address, city, zip, phone, email);
 		contactPersonList.add(contactPerson1);
 
-		for (ContactPerson contactPerson : contactPersonList) {
+		for (Contact contactPerson : contactPersonList) {
 			System.out.println(contactPerson);
 		}
 	}
