@@ -1,26 +1,39 @@
 package com.bridgelabz.addressbook;
 
+import java.util.Objects;
+
 public class Contact {
-
-	public Contact(String firstName, String lastName, String address, String city, String zip, String phone,
-			String email) {
-
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.address = address;
-		this.city = city;
-		this.zip = zip;
-		this.phone = phone;
-		this.email = email;
-	}
 
 	private String firstName;
 	private String lastName;
 	private String address;
 	private String city;
+	private String state;
 	private String zip;
 	private String phone;
 	private String email;
+
+	/**
+	 * @param firstName
+	 * @param lastName
+	 * @param address
+	 * @param city
+	 * @param state
+	 * @param zip
+	 * @param phone
+	 * @param email
+	 */
+	public Contact(String firstName, String lastName, String address, String city, String state, String zip,
+			String phone, String email) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.address = address;
+		this.city = city;
+		this.state = state;
+		this.zip = zip;
+		this.phone = phone;
+		this.email = email;
+	}
 
 	/**
 	 * @return the firstName
@@ -120,10 +133,41 @@ public class Contact {
 		this.email = email;
 	}
 
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Contact other = (Contact) obj;
+		return Objects.equals(firstName, other.firstName);
+	}
+
 	@Override
 	public String toString() {
-		return "ContactPerson [firstName=" + firstName + ", lastName=" + lastName + ", address=" + address + ", city="
-				+ city + ", zip=" + zip + ", phone=" + phone + ", email=" + email + "]";
+		return "Contact [firstName=" + firstName + ", lastName=" + lastName + ", address=" + address + ", city=" + city
+				+ ", state=" + state + ", zip=" + zip + ", phone=" + phone + ", email=" + email + "]";
 	}
 
 }
