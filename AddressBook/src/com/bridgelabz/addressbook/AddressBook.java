@@ -1,14 +1,23 @@
 package com.bridgelabz.addressbook;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AddressBook {
 
-	private static List<Contact> contactList = new ArrayList<>();
+	static List<Contact> contactList = new ArrayList<>();
 
 	public AddressBook() {
 	}
@@ -25,36 +34,137 @@ public class AddressBook {
 			System.out.println("4 -Display addressBook");
 			System.out.println("5 -Search a Contact(using city/state)");
 			System.out.println("6 -Count of Contacts in city/state)");
+			System.out.println("7 -Read contact(s) from the file)");
+			System.out.println("8 -Write contact(s) to the file)");
 			System.out.println("E -Exit");
 			System.out.println("--------------------------------------------------------");
 
 			String opertion = readInput("Operation");
+			AddressBook addressBook = new AddressBook();
 			switch (opertion) {
 			case "1":
-				addContact();
+				addressBook.addContact();
 				break;
 			case "2":
-				editContact();
+				addressBook.editContact();
 				break;
 			case "3":
-				deleteContact();
+				addressBook.deleteContact();
 				break;
 			case "4":
-				displayAddressBook();
+				addressBook.displayAddressBook();
 				break;
 			case "5":
-				searchPerson();
+				addressBook.searchPerson();
 				break;
 			case "6":
-				countPerson();
+				addressBook.countPerson();
 				break;
+
+			case "7":
+				addressBook.addContactFromFile();
+				break;
+
+			case "8":
+				addressBook.writeContactToFile();
+				break;
+
 			case "E":
 				System.exit(0);
 			}
 		}
 	}
 
-	private static void countPerson() {
+	void writeContactToFile() {
+		try {
+
+			List<String[]> dataLines = new ArrayList<>();
+
+			for (Contact c : contactList) {
+				String[] contact = new String[8];
+				contact[0] = c.getFirstName();
+				contact[1] = c.getLastName();
+				contact[2] = c.getAddress();
+				contact[3] = c.getCity();
+				contact[4] = c.getState();
+				contact[5] = c.getZip();
+				contact[6] = c.getPhone();
+				contact[7] = c.getEmail();
+				dataLines.add(contact);
+			}
+			File csvOutputFile = new File("C:\\Users\\kavya\\OneDrive\\Desktop\\ContactsOutput.csv");
+			try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+				dataLines.stream().map(this::convertToCSV).forEach(pw::println);
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	String convertToCSV(String[] data) {
+		return Stream.of(data).map(this::escapeSpecialCharacters).collect(Collectors.joining(","));
+	}
+
+	String escapeSpecialCharacters(String data) {
+		String escapedData = data.replaceAll("\\R", " ");
+		if (data.contains(",") || data.contains("\"") || data.contains("'")) {
+			data = data.replace("\"", "\"\"");
+			escapedData = "\"" + data + "\"";
+		}
+		return escapedData;
+	}
+
+	void addContactFromFile() {
+		Class clazz = AddressBook.class;
+		InputStream inputStream = clazz.getResourceAsStream("/ContactsInput.csv");
+		String data = null;
+		try {
+			data = readFromInputStream(inputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		String[] fields = data.toLowerCase().split(",");
+		System.out.print("Data from the file: ");
+		for (int i = 0; i < fields.length / 7; i++) {
+			String firstName = fields[i % 8];
+			String lastName = fields[i + 1 % 8];
+			String address = fields[i + 2 % 8];
+			String city = fields[i + 3 % 8];
+			String state = fields[i + 4 % 8];
+			String zip = fields[i + 5 % 8];
+			String phone = fields[i + 6 % 8];
+			String email = fields[i + 7 % 8];
+
+			Contact newContact = new Contact(firstName, lastName, address, city, state, zip, phone, email);
+			boolean duplicateContact = false;
+
+			for (Contact contact : contactList) {
+				if (contact.equals(newContact)) {
+					System.out.println("Contact already exists. Enter a different name.");
+					duplicateContact = true;
+				}
+			}
+
+			if (!duplicateContact)
+				contactList.add(newContact);
+		}
+
+	}
+
+	static String readFromInputStream(InputStream inputStream) throws IOException {
+		StringBuilder resultStringBuilder = new StringBuilder();
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				resultStringBuilder.append(line).append("\n");
+			}
+		}
+		return resultStringBuilder.toString();
+	}
+
+	void countPerson() {
 		String cityOrStateToSearch = readInput("City/State To Search");
 
 		int count = (int) contactList.stream()
@@ -64,7 +174,7 @@ public class AddressBook {
 		System.out.println("Number of matching Contacts:" + count);
 	}
 
-	private static void searchPerson() {
+	void searchPerson() {
 		String cityOrStateToSearch = readInput("City/State To Search");
 
 		contactList.stream().filter(contact -> (contact.getCity().equalsIgnoreCase(cityOrStateToSearch)
@@ -72,14 +182,14 @@ public class AddressBook {
 
 	}
 
-	private static void displayAddressBook() {
+	void displayAddressBook() {
 		for (Contact contact : contactList) {
 			System.out.println(contact);
 		}
 
 	}
 
-	private static void deleteContact() {
+	void deleteContact() {
 		String nameToDelete = readInput("Name To Delete");
 
 		for (Iterator<Contact> iterator = contactList.iterator(); iterator.hasNext();) {
@@ -92,7 +202,7 @@ public class AddressBook {
 
 	}
 
-	private static void editContact() {
+	void editContact() {
 		String nameToEdit = readInput("Name To Edit");
 		String firstName = readInput("firstName");
 		String lastName = readInput("lastName");
@@ -121,7 +231,7 @@ public class AddressBook {
 
 	}
 
-	private static void addContact() {
+	void addContact() {
 		String firstName = readInput("firstName");
 		String lastName = readInput("lastName");
 		String address = readInput("address");
@@ -145,7 +255,7 @@ public class AddressBook {
 			contactList.add(newContact);
 	}
 
-	private static String readInput(String term) {
+	static String readInput(String term) {
 		System.out.print("Enter " + term + ":");
 		Scanner scan = new Scanner(System.in);
 		return scan.next();
