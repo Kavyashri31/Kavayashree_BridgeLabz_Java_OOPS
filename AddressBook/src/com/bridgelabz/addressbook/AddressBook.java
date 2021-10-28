@@ -127,15 +127,16 @@ public class AddressBook {
 
 		String[] fields = data.toLowerCase().split(",");
 		System.out.print("Data from the file: ");
-		for (int i = 0; i < fields.length / 7; i++) {
-			String firstName = fields[i % 8];
-			String lastName = fields[i + 1 % 8];
-			String address = fields[i + 2 % 8];
-			String city = fields[i + 3 % 8];
-			String state = fields[i + 4 % 8];
-			String zip = fields[i + 5 % 8];
-			String phone = fields[i + 6 % 8];
-			String email = fields[i + 7 % 8];
+		int i = 0;
+		for (int index = 0; index < fields.length / 8; index++) {
+			String firstName = fields[i];
+			String lastName = fields[i + 1];
+			String address = fields[i + 2];
+			String city = fields[i + 3];
+			String state = fields[i + 4];
+			String zip = fields[i + 5];
+			String phone = fields[i + 6];
+			String email = fields[i + 7];
 
 			Contact newContact = new Contact(firstName, lastName, address, city, state, zip, phone, email);
 			boolean duplicateContact = false;
@@ -149,6 +150,7 @@ public class AddressBook {
 
 			if (!duplicateContact)
 				contactList.add(newContact);
+			i += 8;
 		}
 
 	}
