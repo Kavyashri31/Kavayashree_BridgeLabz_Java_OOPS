@@ -128,7 +128,7 @@ public class AddressBook {
 		String[] fields = data.toLowerCase().split(",");
 		System.out.print("Data from the file: ");
 		int i = 0;
-		for (int index = 0; index < fields.length / 8; index++) {
+		for (int line = 0; line < fields.length / 8; line++) {
 			String firstName = fields[i];
 			String lastName = fields[i + 1];
 			String address = fields[i + 2];
