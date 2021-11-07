@@ -1,0 +1,22 @@
+[
+  {
+    "firstName": "Kavya",
+    "lastName": "Karkera",
+    "address": "HSR",
+    "city": "Bangalore",
+    "state": "Karnataka",
+    "zip": "577201",
+    "phone": "4328723",
+    "email": "kavya@gmail.com"
+  },
+  {
+    "firstName": "Kinsey",
+    "lastName": "Locke",
+    "address": "LockeHouse",
+    "city": "Matheson",
+    "state": "Massachusetts",
+    "zip": "80830",
+    "phone": "235424",
+    "email": "kinsey@gmail.com"
+  }
+]
